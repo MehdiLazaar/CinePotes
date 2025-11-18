@@ -6,9 +6,9 @@ Tous les commits doivent être **rédigés en français**.
 ## 2. Convention des commits
 Respecter la norme **Conventional Commits** :
 
-><type>[scope optionnel] : <description>
->[corps optionnel]
->[pied(s) de page optionnel(s)]
+> type (scope optionnel) : description
+> corps optionnel
+> pied(s) de page optionnel(s)
 
 ### 2.1 Types possibles
 - `build:` → modifications liées à la compilation ou aux dépendances externes  
@@ -33,7 +33,7 @@ Respecter la norme **Conventional Commits** :
 - `(repo)` → ajout ou suppression de branches  
 ### 2.3 Exemple de commit
 
-> chore(repo) création de la branche develop
+#### chore(repo) création de la branche develop
 
 ## 3. Bonnes pratiques
 - Rédiger des messages clairs et concis.  
