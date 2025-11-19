@@ -18,3 +18,17 @@ services:
     restart: always
     ports:
       - 8080:8080
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  job-runner:
+    build:
+      context: ./apps/job-runner
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
