@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Utilisateur (
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(180) UNIQUE NOT NULL,
     mot_de_passe_hash TEXT NOT NULL,
-    rol VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user', 'chef')),
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user', 'chef')),
     cree_le TIMESTAMP DEFAULT NOW(),
     maj_le TIMESTAMP DEFAULT NOW()
 );
