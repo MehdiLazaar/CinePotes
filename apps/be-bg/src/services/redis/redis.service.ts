@@ -8,7 +8,6 @@ import { Redis } from 'ioredis';
 export class RedisService implements OnModuleInit{
     private redisClient: Redis;
     // Creation du client redis a l'initialisation du module
-
     onModuleInit() {
         this.redisClient = new Redis({
             host: 'localhost',
@@ -32,5 +31,5 @@ export class RedisService implements OnModuleInit{
    */
     async set<T>(key: string, value: unknown, ttl =  7200): Promise<void> {
         await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
-      }
+      } 
 }
