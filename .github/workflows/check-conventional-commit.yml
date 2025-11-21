@@ -10,7 +10,7 @@ on:
   pull_request:
     branches:
       - "*"  # all branches
-
+ 
 jobs:
   commit-lint:
     name: Verify Conventional Commits
