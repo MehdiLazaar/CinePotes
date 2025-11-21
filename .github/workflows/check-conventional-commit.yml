@@ -6,10 +6,10 @@ permissions:
 on:
   push:
     branches:
-      - "*"  # all branches
+      - "*"
   pull_request:
     branches:
-      - "*"  # all branches
+      - "*"
 
 jobs:
   commit-lint:
@@ -22,13 +22,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Check Commit Messages
         uses: wagoid/commitlint-github-action@v6
