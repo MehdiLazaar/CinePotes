@@ -1,0 +1,34 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_run:
+    workflows: ["Conventional Commits"]
+    types: [completed]
+
+jobs:
+  build-and-push:
+    # Run only if CC passed AND branch == "49-tt-pipeline"
+    if: >
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+         github.event.workflow_run.head_branch == '49-tt-pipeline' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Dump workflow_run event
+        run: |
+          echo "Workflow name: ${{ github.event.workflow_run.name }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Workflow head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Full workflow_run JSON:"
+          echo "${{ toJson(github.event.workflow_run) }}"
+
+      # Example placeholder step
+      - name: Test step
+        run: echo "This job runs only if CC passed on branch 49-tt-pipeline"
