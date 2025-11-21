@@ -2,19 +2,14 @@ name: Build and Push Docker Image
 
 on:
   workflow_run:
-    workflows: [Conventional Commits]
+    workflows: ["Conventional Commits"]
     types: [completed]
 
 
 jobs:
   build-and-push:
 
-    # Run only if CC passed AND branch == "49-tt-pipeline"
-    if: >
-      ${{
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_branch == '49-tt-pipeline'
-      }}
+
       
     runs-on: ubuntu-latest
 
