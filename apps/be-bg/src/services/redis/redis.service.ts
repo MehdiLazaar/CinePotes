@@ -6,19 +6,40 @@ import { Redis } from 'ioredis';
   ansi les operations cache get et set */
 @Injectable()
 export class RedisService implements OnModuleInit{
-    private redisClient: Redis;
+    private redisClient: Redis | null = null;
+    private valable = false;
     // Creation du client redis a l'initialisation du module
-    onModuleInit() {
-        this.redisClient = new Redis({
-            host: 'localhost',
-            port: 6379,
-        });
+    async onModuleInit() {
+    try {
+      this.redisClient = new Redis({
+        host: 'localhost',
+        port: 6379,
+      });
+
+      this.redisClient.on('connect', () => {
+        console.log('Redis connecté avec succès');
+        this.valable = true;
+      });
+
+      this.redisClient.on('error', (e) => {
+        console.error('Redis error:', e);
+        this.valable = false;
+      });
+
+    } catch (e) {
+      console.error('Erreur de connexion à Redis:', e);
+      this.valable = false;
     }
+  }
+    
     /**
    * Récupère une valeur depuis Redis.
    * @param key - clé du cache
    */
   async get<T>(key: string): Promise<T | null> {
+    if (!this.redisClient) {
+      return null;
+    }
     const data = await this.redisClient.get(key);
     return data ? (JSON.parse(data) as T) : null;
   }
@@ -30,6 +51,9 @@ export class RedisService implements OnModuleInit{
    * @param ttl - durée de vie en secondes
    */
     async set<T>(key: string, value: unknown, ttl =  7200): Promise<void> {
+      if (!this.redisClient) {
+        return;
+      }
         await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
       } 
 }

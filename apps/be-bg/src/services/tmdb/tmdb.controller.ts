@@ -1,7 +1,13 @@
-import { Controller, Query } from '@nestjs/common';
-import { Get } from '@nestjs/common';
-import { Param } from '@nestjs/common';
-import { ParseIntPipe } from '@nestjs/common';
+// tmdb.controller.ts
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { DetailsFilm } from './types/tmdb.types';
 import { TmdbService } from './tmdb.service';
 
@@ -9,32 +15,48 @@ import { TmdbService } from './tmdb.service';
 export class TmdbController {
   constructor(private readonly tmdbService: TmdbService) {}
 
-  /**
-  * Methode pour obtenir les détails d'un film par son identifiant TMDB.
-  * @param id - Identifiant TMDB du film
-  * @returns Détails du film
-  */
-  @Get(':id')
-  getMovie(@Param('id', ParseIntPipe) id: number): Promise<DetailsFilm> {
-    // return new Promise<DetailsFilm>((resolve) => resolve ({
-    //   id: 550,
-    //   titre: "Fight Club",
-    //   resume: "A ticking-time-bomb insomniac and a slippery soap salesman channel perfect murder into a shocking new reality.",
-    //   date_sortie: "1999-10-12",
-    //   affiche_url: null,
-    //   note_moyenne: 8.7
-    // }));
-    return this.tmdbService.obtenirDetailsFilm(id);
-  }
-  // Nouveau endpoint pour récupérer plusieurs films
+  // Static routes 
+
+  // Récupérer plusieurs films par leurs IDs
   @Get('movies')
   getMovies(@Query('ids') ids: string): Promise<DetailsFilm[]> {
-    const filmIds = ids.split(',').map(id => parseInt(id, 10));
+    if (!ids) {
+      throw new HttpException('ids est requis', HttpStatus.BAD_REQUEST);
+    }
+
+    const filmIds = ids
+      .split(',')
+      .map((x) => parseInt(x.trim(), 10))
+      .filter((n) => Number.isFinite(n));
+
+    if (filmIds.length === 0) {
+      throw new HttpException('ids invalide', HttpStatus.BAD_REQUEST);
+    }
+
     return this.tmdbService.obtenirPlusieursFilms(filmIds);
   }
-  // Ou pour récupérer des films populaires
+
+  // Films populaires
   @Get('films/populaires')
   getPopularMovies(): Promise<DetailsFilm[]> {
     return this.tmdbService.obtenirFilmsPopulaires();
+  }
+
+  // Recherche
+  @Get('recherche')
+  rechercherFilms(@Query('query') query: string): Promise<DetailsFilm[]> {
+    if (!query || query.trim().length < 3) {
+      throw new HttpException(
+        'La recherche doit contenir au moins 3 caractères',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.tmdbService.rechercherFilms(query);
+  }
+
+  // ✅ Dynamic route 
+  @Get(':id')
+  getMovie(@Param('id', ParseIntPipe) id: number): Promise<DetailsFilm> {
+    return this.tmdbService.obtenirDetailsFilm(id);
   }
 }
